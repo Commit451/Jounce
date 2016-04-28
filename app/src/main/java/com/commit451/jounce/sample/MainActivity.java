@@ -1,11 +1,13 @@
 package com.commit451.jounce.sample;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 
 import com.commit451.jounce.DebouncerMap;
 
@@ -53,6 +55,14 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         mToolbar.setTitle(R.string.app_name);
+        mToolbar.inflateMenu(R.menu.search);
+        mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                startActivity(new Intent(MainActivity.this, SearchActivity.class));
+                return true;
+            }
+        });
         mCheeseAdapter = new CheeseAdapter(mCheeseAdapterListener);
         mList.setAdapter(mCheeseAdapter);
         mList.setLayoutManager(new GridLayoutManager(this, 2));
