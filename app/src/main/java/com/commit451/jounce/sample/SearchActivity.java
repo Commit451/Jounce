@@ -87,6 +87,7 @@ public class SearchActivity extends AppCompatActivity {
 
     @OnClick(R.id.clear)
     void onClearClick() {
+        mSearchDebouncer.cancel();
         mClearView.animate().alpha(0.0f).withEndAction(new Runnable() {
             @Override
             public void run() {
