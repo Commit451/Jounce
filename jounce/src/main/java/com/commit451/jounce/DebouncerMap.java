@@ -9,9 +9,16 @@ import java.util.HashMap;
  */
 public abstract class DebouncerMap<K, T> {
 
-    private HashMap<K, Debouncer<T>> mDebouncerHashMap = new HashMap<>();
+    /**
+     * Called upon each debouncer's completion
+     * @param key the key associated with the debouncer
+     * @param value the value after debouncing
+     */
+    public abstract void onValueChanged(K key, T value);
 
-    private long mDelay;
+    private HashMap<K, Debouncer<T>> debouncerHashMap = new HashMap<>();
+
+    private long delay;
 
     /**
      * Construct a debounce map with the default delay {@link Debouncer#DEFAULT_DELAY}
@@ -25,7 +32,7 @@ public abstract class DebouncerMap<K, T> {
      * @param delay the custom delay
      */
     public DebouncerMap(int delay) {
-        mDelay = delay;
+        this.delay = delay;
     }
 
     /**
@@ -36,7 +43,7 @@ public abstract class DebouncerMap<K, T> {
      */
     @Nullable
     public T getValue(K key) {
-        Debouncer<T> debouncer = mDebouncerHashMap.get(key);
+        Debouncer<T> debouncer = debouncerHashMap.get(key);
         if (debouncer != null) {
             return debouncer.getValue();
         }
@@ -49,12 +56,12 @@ public abstract class DebouncerMap<K, T> {
      * @param value the value to set
      */
     public void setValue(K key, T value) {
-        if (mDebouncerHashMap.containsKey(key)) {
-            Debouncer<T> debouncer = mDebouncerHashMap.get(key);
+        if (debouncerHashMap.containsKey(key)) {
+            Debouncer<T> debouncer = debouncerHashMap.get(key);
             debouncer.setValue(value);
         } else {
-            Debouncer<T> debouncer = new KeyedDebouncer(key, mDelay);
-            mDebouncerHashMap.put(key, debouncer);
+            Debouncer<T> debouncer = new KeyedDebouncer(key, delay);
+            debouncerHashMap.put(key, debouncer);
             debouncer.setValue(value);
         }
     }
@@ -64,32 +71,54 @@ public abstract class DebouncerMap<K, T> {
      * @param key key
      */
     public void cancel(K key) {
-        Debouncer<T> debouncer = mDebouncerHashMap.get(key);
+        Debouncer<T> debouncer = debouncerHashMap.get(key);
         if (debouncer != null) {
             debouncer.cancel();
         }
     }
 
     /**
-     * Called upon each debouncer's completion
-     * @param key the key associated with the debouncer
-     * @param value the value after debouncing
+     * Cancel all the debouncers in the map
      */
-    public abstract void onValueChanged(K key, T value);
+    public void cancelAll() {
+        for (Debouncer debouncer : debouncerHashMap.values()) {
+            debouncer.cancel();
+        }
+    }
+
+    /**
+     * Immediately call {@link #onValueChanged(Object, Object)} of the debouncer with the given key
+     * @param key key
+     */
+    public void call(K key) {
+        Debouncer<T> debouncer = debouncerHashMap.get(key);
+        if (debouncer != null) {
+            debouncer.call();
+        }
+    }
+
+    /**
+     * Immediately call {@link #onValueChanged(Object, Object)} for all the debouncers in the map
+     */
+    public void callAll() {
+        for (Debouncer debouncer : debouncerHashMap.values()) {
+            debouncer.call();
+        }
+    }
 
     private class KeyedDebouncer extends Debouncer<T> {
 
-        private K mKey;
+        private K key;
 
         public KeyedDebouncer(K key, long delay) {
             super(delay);
-            mKey = key;
+            this.key = key;
         }
 
         @Override
         public void onValueSet(T value) {
-            mDebouncerHashMap.remove(mKey);
-            onValueChanged(mKey, value);
+            debouncerHashMap.remove(key);
+            onValueChanged(key, value);
         }
     }
 

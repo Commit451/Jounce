@@ -9,13 +9,13 @@ public abstract class Debouncer<T> {
 
     public static final int DEFAULT_DELAY = 500;
 
-    private T mValue;
-    private Handler mHandler;
-    private long mDelay = DEFAULT_DELAY;
-    private Runnable mValueSetRunnable = new Runnable() {
+    private T value;
+    private Handler handler;
+    private long delay = DEFAULT_DELAY;
+    private Runnable valueSetRunnable = new Runnable() {
         @Override
         public void run() {
-            onValueSet(mValue);
+            onValueSet(value);
         }
     };
 
@@ -31,8 +31,8 @@ public abstract class Debouncer<T> {
      * @param delay the amount of time before delivering the debounce result
      */
     public Debouncer(long delay) {
-        mDelay = delay;
-        mHandler = new Handler();
+        this.delay = delay;
+        handler = new Handler();
     }
 
     /**
@@ -40,7 +40,7 @@ public abstract class Debouncer<T> {
      * @return the stored value, which will be passed to {@link #onValueSet(Object)} upon completion
      */
     public T getValue() {
-        return mValue;
+        return value;
     }
 
     /**
@@ -48,18 +48,26 @@ public abstract class Debouncer<T> {
      * @param value the value to set
      */
     public void setValue(T value) {
-        if (mValue == null || !mValue.equals(value)) {
-            mValue = value;
-            mHandler.removeCallbacks(mValueSetRunnable);
-            mHandler.postDelayed(mValueSetRunnable, mDelay);
+        if (this.value == null || !this.value.equals(value)) {
+            this.value = value;
+            handler.removeCallbacks(valueSetRunnable);
+            handler.postDelayed(valueSetRunnable, delay);
         }
+    }
+
+    /**
+     * Immediately deliver the value to {@link #onValueSet(Object)}
+     */
+    public void call() {
+        onValueSet(value);
+        cancel();
     }
 
     /**
      * Cancel the current debouncing so that {@link #onValueSet(Object)} is not called
      */
     public void cancel() {
-        mHandler.removeCallbacks(mValueSetRunnable);
+        handler.removeCallbacks(valueSetRunnable);
     }
 
     /**
