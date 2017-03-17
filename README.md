@@ -5,12 +5,33 @@ Fancy debouncing
 [![](https://jitpack.io/v/Commit451/Jounce.svg)](https://jitpack.io/#Commit451/Jounce)
 
 # Usage
-See the sample project for a comprehensive example. 
+See the sample project for a comprehensive example.
+In a simple form, it looks a little something like this:
+```java
+long oneSecond = TimeUnit.SECONDS.toMillis(1);
+//Void, since we are not keeping track of a value
+final Debouncer<Void> debouncer = new Debouncer<Void>(oneSecond) {
+
+    @Override
+    public void onValueSet(Void value) {
+        Snackbar.make(getWindow().getDecorView(), "Toolbar was clicked 1 second ago", Snackbar.LENGTH_SHORT)
+                .show();
+    }
+};
+toolbar.setOnClickListener(new View.OnClickListener() {
+    @Override
+    public void onClick(View v) {
+        //starts/restarts the deboucing
+        debouncer.setValue(null);
+    }
+});
+```
+The sample shows usage within a RecyclerView, as well as usage for search ahead within an example search activity
 
 License
 --------
 
-    Copyright 2016 Commit 451
+    Copyright 2017 Commit 451
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.

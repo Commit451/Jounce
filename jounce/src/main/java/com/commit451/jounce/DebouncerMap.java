@@ -11,7 +11,7 @@ public abstract class DebouncerMap<K, T> {
 
     private HashMap<K, Debouncer<T>> mDebouncerHashMap = new HashMap<>();
 
-    private int mDelay;
+    private long mDelay;
 
     /**
      * Construct a debounce map with the default delay {@link Debouncer#DEFAULT_DELAY}
@@ -22,7 +22,7 @@ public abstract class DebouncerMap<K, T> {
 
     /**
      * Construct a debounce map with a custom delay
-     * @param delay
+     * @param delay the custom delay
      */
     public DebouncerMap(int delay) {
         mDelay = delay;
@@ -81,7 +81,7 @@ public abstract class DebouncerMap<K, T> {
 
         private K mKey;
 
-        public KeyedDebouncer(K key, int delay) {
+        public KeyedDebouncer(K key, long delay) {
             super(delay);
             mKey = key;
         }

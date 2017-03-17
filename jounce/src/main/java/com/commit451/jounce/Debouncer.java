@@ -11,7 +11,7 @@ public abstract class Debouncer<T> {
 
     private T mValue;
     private Handler mHandler;
-    private int mDelay = DEFAULT_DELAY;
+    private long mDelay = DEFAULT_DELAY;
     private Runnable mValueSetRunnable = new Runnable() {
         @Override
         public void run() {
@@ -30,7 +30,7 @@ public abstract class Debouncer<T> {
      * Create a debouncer with a custom debounce time
      * @param delay the amount of time before delivering the debounce result
      */
-    public Debouncer(int delay) {
+    public Debouncer(long delay) {
         mDelay = delay;
         mHandler = new Handler();
     }
