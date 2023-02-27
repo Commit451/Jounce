@@ -2,30 +2,22 @@ package com.commit451.jounce.sample;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.commit451.jounce.Debouncer;
 import com.commit451.jounce.DebouncerMap;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
 public class MainActivity extends AppCompatActivity {
-
-
-    @BindView(R.id.toolbar)
-    Toolbar toolbar;
-    @BindView(R.id.list)
-    RecyclerView list;
 
     CheeseAdapter adapter;
 
@@ -56,7 +48,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        ButterKnife.bind(this);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        RecyclerView list = findViewById(R.id.list);
         toolbar.setTitle(R.string.app_name);
         toolbar.inflateMenu(R.menu.search);
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {

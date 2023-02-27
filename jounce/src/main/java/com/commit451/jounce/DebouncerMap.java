@@ -1,7 +1,5 @@
 package com.commit451.jounce;
 
-import android.support.annotation.Nullable;
-
 import java.util.HashMap;
 
 /**
@@ -41,7 +39,6 @@ public abstract class DebouncerMap<K, T> {
      * @param key the key
      * @return the value of the debouncer, or null if no debouncer found for key
      */
-    @Nullable
     public T getValue(K key) {
         Debouncer<T> debouncer = debouncerHashMap.get(key);
         if (debouncer != null) {

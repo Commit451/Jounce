@@ -1,35 +1,30 @@
 package com.commit451.jounce.sample;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+
 import com.commit451.jounce.Debouncer;
 import com.commit451.teleprinter.Teleprinter;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 /**
  * Show search example
  */
 public class SearchActivity extends AppCompatActivity {
 
-    @BindView(R.id.toolbar)
     Toolbar mToolbar;
-    @BindView(R.id.search)
     EditText mSearchView;
-    @BindView(R.id.clear)
     View mClearView;
 
     Teleprinter mTeleprinter;
@@ -50,14 +45,15 @@ public class SearchActivity extends AppCompatActivity {
             mSearchDebouncer.cancel();
             String query = mSearchView.getText().toString();
             search(query);
-            mTeleprinter.hideKeyboard();
+            mTeleprinter.hideKeyboard(0);
             return false;
         }
     };
 
     private final TextWatcher mTextWatcher = new TextWatcher() {
         @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        }
 
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -72,7 +68,7 @@ public class SearchActivity extends AppCompatActivity {
                 mClearView.setVisibility(View.VISIBLE);
                 mClearView.animate().alpha(1.0f);
             }
-            if (s != null &&  s.length() > 3) {
+            if (s != null && s.length() > 3) {
                 mSearchDebouncer.setValue(s);
             }
             //This means they are backspacing
@@ -82,27 +78,31 @@ public class SearchActivity extends AppCompatActivity {
         }
 
         @Override
-        public void afterTextChanged(Editable s) {}
+        public void afterTextChanged(Editable s) {
+        }
     };
-
-    @OnClick(R.id.clear)
-    void onClearClick() {
-        mSearchDebouncer.cancel();
-        mClearView.animate().alpha(0.0f).withEndAction(new Runnable() {
-            @Override
-            public void run() {
-                mClearView.setVisibility(View.GONE);
-            }
-        });
-        mSearchView.getText().clear();
-        mTeleprinter.showKeyboard(mSearchView);
-    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
-        ButterKnife.bind(this);
+        mToolbar = findViewById(R.id.toolbar);
+        mSearchView = findViewById(R.id.search);
+        mClearView = findViewById(R.id.clear);
+        mClearView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mSearchDebouncer.cancel();
+                mClearView.animate().alpha(0.0f).withEndAction(new Runnable() {
+                    @Override
+                    public void run() {
+                        mClearView.setVisibility(View.GONE);
+                    }
+                });
+                mSearchView.getText().clear();
+                mTeleprinter.showKeyboard(mSearchView, InputMethodManager.SHOW_IMPLICIT);
+            }
+        });
         mToolbar.setNavigationIcon(R.drawable.ic_arrow_back_24dp);
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -110,7 +110,7 @@ public class SearchActivity extends AppCompatActivity {
                 onBackPressed();
             }
         });
-        mTeleprinter = new Teleprinter(this);
+        mTeleprinter = new Teleprinter(this, false);
         mSearchView.addTextChangedListener(mTextWatcher);
         mSearchView.setOnEditorActionListener(mOnSearchEditorActionListener);
     }

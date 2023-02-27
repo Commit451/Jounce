@@ -1,12 +1,11 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion "25.0.2"
+    compileSdkVersion 33
 
     defaultConfig {
-        minSdkVersion 15
-        targetSdkVersion 25
+        minSdkVersion 21
+        targetSdkVersion 33
         versionCode 1
         versionName "1.0"
     }
@@ -20,12 +19,3 @@ android {
         abortOnError false
     }
 }
-
-dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:support-annotations:25.3.0'
-
-    testCompile 'junit:junit:4.12'
-}
-
-apply from: 'https://raw.githubusercontent.com/Commit451/gradle-android-javadocs/1.0.0/gradle-android-javadocs.gradle'
